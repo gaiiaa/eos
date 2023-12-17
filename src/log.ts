@@ -1,3 +1,3 @@
-import { createLogger } from "./log.mjs";
+import { createLogger } from "@gaiiaa/logger";
 
 export const LOG = createLogger({ level: 0, name: "eos" });

@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@gaiiaa/logger':
+    specifier: ^0.1.3
+    version: 0.1.3
   c12:
     specifier: ^1.5.1
     version: 1.5.1
@@ -673,6 +676,10 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@gaiiaa/logger@0.1.3:
+    resolution: {integrity: sha512-1Tx/7YcLHuvkeMGeSutfUrjKfIpTrUryvVROts4XPsCjScgnkMOz3YhUmcrL1GGRatfW7XEw4atDtDBxN4vQ6g==}
+    dev: false
 
   /@istanbuljs/schema@0.1.3:
     resolution: {integrity: sha512-ZXRY4jNvVgSVQ8DL3LTcakaAtXwTVUxE81hslsyD2AtoXW/wVob10HkOJ1X/pAlcI7D+2YoZKg5do8G/w6RYgA==}

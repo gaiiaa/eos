@@ -1,23 +1,38 @@
 import { useEffect, useRef, useState } from "react";
 import { render, useInput, useApp, Box, Text, useStdin, Spacer } from "ink";
 import { ScrollContainer } from "./ScrollContainer.js";
-import { Screen, useForceRefresh, useScreenSize } from "./tools.js";
+import { Screen, awaitableProcess, runCommand, useForceRefresh, useScreenSize } from "./tools.js";
 import { create } from "zustand";
 import { Eos } from "../config.js";
 import { match } from "../tools.js";
 import * as cmd from "child_process";
 import { appendFile } from "fs/promises";
-import { error } from "console";
 
+/*
+	Home: depending on existance of eos project, give option to create a new project or run other commands
+	Create (project): Project creation wizard
+	Create (component): Component creation wizard
+	Dev: Start dev server
+	Build: Build project
+	Build Summary: Summary of build
+	Preview: Preview project
+\
+*/
 enum Routes {
-	Home = "home",
-	Dev = "dev",
-	Build = "build",
-	Create = "create",
+	Home,
+	Dev,
+	Build,
+	PostBuild,
+	ProjectStats,
+	Preview,
+	CreateProject,
+	CreateComponent,
 }
 
 const useStore = create<{
 	route: Routes;
+	projectName?: string;
+	branch?: string;
 	setRoute: (route: Routes) => void;
 }>((set) => ({
 	route: Routes.Home,
@@ -40,7 +55,7 @@ function App() {
 		case Routes.Dev:
 			return <Dev />;
 		case Routes.Build:
-		case Routes.Create:
+		case Routes.CreateComponent:
 		default:
 			return <Box />;
 	}
@@ -52,7 +67,7 @@ function Home() {
 
 function Dev() {
 	const lines = useRef<React.ReactNode[]>([]);
-	const stream = useStdin();
+	const store = useStore();
 	const refresh = useForceRefresh();
 	const screen = useScreenSize();
 	const [showCommands, setShowCommands] = useState(false);
@@ -88,6 +103,7 @@ function Dev() {
 		process.stdout.on("error", addErrLog);
 		process.stderr.on("data", addErrLog);
 		process.stderr.on("error", addErrLog);
+
 		return () =>
 			void (process.kill(),
 			process.stdout.off("data", addLog),
@@ -102,14 +118,16 @@ function Dev() {
 				<Box paddingX={2} flexDirection="row" justifyContent="space-between">
 					<Box flexDirection="row">
 						<Text color="green" bold>
-							Eos
+						∃os
 						</Text>
-						<Text> : </Text>
+						<Text> · </Text>
 						<Text color="cyanBright" bold>
 							Dev
 						</Text>
-						<Text> : </Text>
-						<Text>my-project-name</Text>
+						<Text> · </Text>
+						<Text>{store.projectName}</Text>
+						<Text> · </Text>
+						<Text>⎇ {store.branch?.trim()}</Text>
 					</Box>
 					{!showSidebar && <Text>Lint: Passing</Text>}
 				</Box>
@@ -142,9 +160,22 @@ function Dev() {
 								flexDirection="row"
 								justifyContent="space-around"
 							>
-								<Text dimColor>{"c - create"}</Text>
-								<Text dimColor>{"b - build"}</Text>
-								<Text dimColor>{"p - preview"}</Text>
+								<Box>
+									<Text>b</Text>
+									<Text dimColor>uild</Text>
+								</Box>
+								<Box>
+									<Text>c</Text>
+									<Text dimColor>reate</Text>
+								</Box>
+								<Box>
+									<Text>p</Text>
+									<Text dimColor>review</Text>
+								</Box>
+								<Box>
+									<Text>s</Text>
+									<Text dimColor>tats</Text>
+								</Box>
 							</Box>
 						)}
 					</Box>
@@ -155,7 +186,7 @@ function Dev() {
 							borderColor="green"
 							borderStyle={"round"}
 						>
-							<Text italic bold color="cyanBright">
+							<Text bold color="cyanBright">
 								Info
 							</Text>
 						</Box>
@@ -166,14 +197,16 @@ function Dev() {
 	);
 }
 
-export default function entry(eos: Eos, command?: string) {
+export default async function entry(eos: Eos, command?: string) {
 	const route =
 		match(
 			command,
 			["dev", Routes.Dev],
 			["build", Routes.Build],
-			["create", Routes.Create]
+			["create", Routes.CreateProject]
 		) ?? Routes.Home;
-	useStore.setState({ route });
+	const projectName = process.cwd();
+	let branch = await runCommand("git branch --show-current");
+	useStore.setState({ route, projectName, branch});
 	render(<App />);
 }

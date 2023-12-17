@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Box, useInput, useStdout } from "ink";
+import { exec } from "child_process";
 
 export const useScreenSize = () => {
   const { stdout } = useStdout();
@@ -35,4 +36,20 @@ export const Screen = ({ children }: {children: React.ReactNode}) => {
 export const useForceRefresh = () => {
   const [, update] = useState(0);
   return () => update((n) => n + 1);
+}
+
+export function runCommand(command: string) {
+  return new Promise<string>((resolve, reject) => {
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      if (stderr) {
+        reject(stderr);
+        return;
+      }
+      resolve(stdout);
+    });
+  });
 }

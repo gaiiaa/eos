@@ -1,5 +1,5 @@
 import { loadEosConfig } from "../config.js";
-import { LOG } from "../log/index.js";
+import { LOG } from "../log.js";
 const commands = ["dev", "build", "create", "serve"];
 const flags = ["--raw", "-R"];
 
@@ -17,9 +17,8 @@ async function entry(args: string[]) {
 		return;
 	}
   if(!raw) {
-    // run the cli, pass through the args
-    console.log("Running CLI")
     import("./cli.js").then((cli) => cli.default(eos.config!, command));
+    return;
   }
   if(command && commands.includes(command) && raw) {
     LOG.fatal(command.toUpperCase(), "RAW, NOT IMPLEMENTED");
