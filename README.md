@@ -3,44 +3,16 @@
 
 ![Archí](.github/banner.jpg)
 
-<h3>Archí 🔨</h3>
+<h3>∃os</h3>
 
-#### Node minimal starter package
+#### The serene Solid framework
 
 [![Npm package yearly downloads](https://badgen.net/npm/dy/express)](https://npmjs.com/package/express)
 [![GitHub stars](https://img.shields.io/github/stars/freeCodeCamp/freeCodeCamp.svg?style=social&label=Star&maxAge=2592000)](https://github.com/freeCodeCamp/freeCodeCamp)
 [![NuGet stable version](https://badgen.net/nuget/v/newtonsoft.json)](https://nuget.org/packages/newtonsoft.json)
 
-*A minimal starter typescript template for Node libraries with Vite, Vitest, and Unbuild.*
+*a Solid JS framework*
 </div>
-
-## Usage
-
-Install package:
-
-```sh
-# npm
-npm install packageName
-
-# yarn
-yarn add packageName
-
-# pnpm
-pnpm install packageName
-
-# bun
-bun install packageName
-```
-
-Import:
-
-```js
-// node
-import {} from "packageName";
-
-// deno
-import * as packageName from "https://esm.sh/packageName"
-```
 
 ## Development
 
